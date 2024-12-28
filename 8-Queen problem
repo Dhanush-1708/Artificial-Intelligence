@@ -1,0 +1,64 @@
+# Initialize the chessboard
+N = 8
+board = [[0 for _ in range(N)] for _ in range(N)]
+
+# Variable to indicate whether a solution is found
+solution_found = False
+
+# Place queens row by row
+row = 0
+positions = []
+
+while row >= 0:
+    placed = False
+
+    # Find a column to place the queen in the current row
+    col = positions[row] + 1 if row < len(positions) else 0
+
+    while col < N:
+        # Check if the position is safe
+        safe = True
+
+        for r in range(row):
+            c = positions[r]
+            if c == col or abs(c - col) == abs(r - row):
+                safe = False
+                break
+
+        if safe:
+            # Place the queen and proceed to the next row
+            if row < len(positions):
+                positions[row] = col
+            else:
+                positions.append(col)
+
+            placed = True
+            break
+
+        col += 1
+
+    if placed:
+        # If the queen was placed, move to the next row
+        row += 1
+        if row == N:
+            # All queens placed successfully
+            solution_found = True
+            break
+    else:
+        # Backtrack if no valid position found
+        if row < len(positions):
+            positions.pop()
+        row -= 1
+
+# Print the result
+if solution_found:
+    for r in range(N):
+        row_output = ""
+        for c in range(N):
+            if c == positions[r]:
+                row_output += "Q "
+            else:
+                row_output += ". "
+        print(row_output)
+else:
+    print("No solution exists.")
