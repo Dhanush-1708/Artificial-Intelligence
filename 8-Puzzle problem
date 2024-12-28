@@ -1,0 +1,58 @@
+from collections import deque
+
+# Initial state and goal state
+initial_state = [
+    [1, 2, 3],
+    [4, 0, 5],
+    [7, 8, 6]
+]
+
+goal_state = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 0]
+]
+
+# BFS Setup
+queue = deque([(initial_state, [])])
+visited = set()
+visited.add(tuple(map(tuple, initial_state)))
+solution_found = False
+
+while queue:
+    current, path = queue.popleft()
+
+    # Check if the goal state is reached
+    if current == goal_state:
+        solution_found = True
+        print("Solution found!")
+        print("Moves:", path)
+        break
+
+    # Find the position of the blank tile (0)
+    for i in range(3):
+        for j in range(3):
+            if current[i][j] == 0:
+                x, y = i, j
+                break
+
+    # Directions for movement (up, down, left, right)
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        # Check if the move is valid
+        if 0 <= nx < 3 and 0 <= ny < 3:
+            # Create a new state by swapping tiles
+            new_state = [row[:] for row in current]
+            new_state[x][y], new_state[nx][ny] = new_state[nx][ny], new_state[x][y]
+
+            # Convert the state to a tuple for hashing
+            state_tuple = tuple(map(tuple, new_state))
+
+            if state_tuple not in visited:
+                visited.add(state_tuple)
+                queue.append((new_state, path + [(nx, ny)]))
+
+if not solution_found:
+    print("No solution exists.")
